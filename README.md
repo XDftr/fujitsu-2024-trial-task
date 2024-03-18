@@ -1,0 +1,1 @@
+# fujitsu-2024-trial-task
