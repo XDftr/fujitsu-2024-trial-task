@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="0.0.1_create_tables" author="Deniel Konstantinov">
+        <createTable tableName="station">
+            <column name="station_id" type="serial">
+                <constraints primaryKey="true" primaryKeyName="pk_station_station_id"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints unique="true" uniqueConstraintName="uk_station_name"/>
+            </column>
+            <column name="wmocode" type="integer">
+                <constraints unique="true" uniqueConstraintName="uk_station_wmocode"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="observation">
+            <column name="observation_id" type="bigserial">
+                <constraints primaryKey="true" primaryKeyName="pk_observation_observation_id"/>
+            </column>
+            <column name="station_id" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phenomenon" type="varchar(50)"/>
+            <column name="air_temperature" type="decimal(3, 1)"/>
+            <column name="wind_speed" type="decimal(4, 1)"/>
+        </createTable>
+        
+        <addForeignKeyConstraint baseTableName="observation"
+                                 baseColumnNames="station_id"
+                                 constraintName="fk_observation_station_id"
+                                 referencedTableName="station"
+                                 referencedColumnNames="station_id"/>
+
+        <createTable tableName="regional_base_fee">
+            <column name="regional_base_fee_id" type="serial">
+                <constraints primaryKey="true" primaryKeyName="regional_base_fee_regional_base_fee_id"/>
+            </column>
+            <column name="city" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vehicle_type" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rbf" type="decimal(3, 1)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint
+                tableName="regional_base_fee"
+                columnNames="city, vehicle_type"
+                constraintName="uk_regional_base_fee_city_vehicle_type"
+        />
+
+        <insert tableName="regional_base_fee">
+            <column name="city" value="Tallinn"/>
+            <column name="vehicle_type" value="Car"/>
+            <column name="rbf" value="4"/>
+        </insert>
+        <insert tableName="regional_base_fee">
+            <column name="city" value="Tallinn"/>
+            <column name="vehicle_type" value="Scooter"/>
+            <column name="rbf" value="3.5"/>
+        </insert>
+        <insert tableName="regional_base_fee">
+            <column name="city" value="Tallinn"/>
+            <column name="vehicle_type" value="Bike"/>
+            <column name="rbf" value="3"/>
+        </insert>
+
+        <insert tableName="regional_base_fee">
+            <column name="city" value="Tartu"/>
+            <column name="vehicle_type" value="Car"/>
+            <column name="rbf" value="3.5"/>
+        </insert>
+        <insert tableName="regional_base_fee">
+            <column name="city" value="Tartu"/>
+            <column name="vehicle_type" value="Scooter"/>
+            <column name="rbf" value="3"/>
+        </insert>
+        <insert tableName="regional_base_fee">
+            <column name="city" value="Tartu"/>
+            <column name="vehicle_type" value="Bike"/>
+            <column name="rbf" value="2.5"/>
+        </insert>
+
+        <insert tableName="regional_base_fee">
+            <column name="city" value="Pärnu"/>
+            <column name="vehicle_type" value="Car"/>
+            <column name="rbf" value="3"/>
+        </insert>
+        <insert tableName="regional_base_fee">
+            <column name="city" value="Pärnu"/>
+            <column name="vehicle_type" value="Scooter"/>
+            <column name="rbf" value="2.5"/>
+        </insert>
+        <insert tableName="regional_base_fee">
+            <column name="city" value="Pärnu"/>
+            <column name="vehicle_type" value="Bike"/>
+            <column name="rbf" value="2"/>
+        </insert>
+
+        <createTable tableName="global_extra_fee">
+            <column name="global_extra_fee_id" type="serial">
+                <constraints primaryKey="true" primaryKeyName="pk_global_extra_fee_global_extra_fee_id"/>
+            </column>
+            <column name="condition" type="varchar(50)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_global_extra_fee_condition"/>
+            </column>
+            <column name="fee_value" type="decimal(3,1)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <insert tableName="global_extra_fee">
+            <column name="condition" value="AirTemperatureBelow-10"/>
+            <column name="fee_value" value="1"/>
+        </insert>
+
+        <insert tableName="global_extra_fee">
+            <column name="condition" value="AirTemperatureBetween0And-10"/>
+            <column name="fee_value" value="0.5"/>
+        </insert>
+
+        <insert tableName="global_extra_fee">
+            <column name="condition" value="WindSpeedBetween10And20"/>
+            <column name="fee_value" value="0.5"/>
+        </insert>
+
+        <insert tableName="global_extra_fee">
+            <column name="condition" value="PhenomenonSnowOrSleet"/>
+            <column name="fee_value" value="1"/>
+        </insert>
+
+        <insert tableName="global_extra_fee">
+            <column name="condition" value="PhenomenonRain"/>
+            <column name="fee_value" value="0.5"/>
+        </insert>
+
+    </changeSet>
+</databaseChangeLog>
