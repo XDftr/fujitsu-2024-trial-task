@@ -19,7 +19,7 @@ public class WeatherTaskScheduler {
      * Retrieve weather data from the REST API and save it to the database.
      * This method is scheduled to run at the specified cron schedule.
      */
-    @Scheduled(cron = "${weather.cron.schedule2}")
+    @Scheduled(cron = "${weather.cron.schedule}")
     public void fetchWeatherData() {
         RestTemplate restTemplate = new RestTemplate();
         try {
